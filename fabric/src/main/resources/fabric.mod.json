@@ -13,10 +13,10 @@
     },
     "license": "${license}",
     "icon": "${mod_id}.png",
-    "environment": "*",
+    "environment": "${mod_environment}",
     "entrypoints": {
         "main": [
-            "com.example.examplemod.ExampleMod"
+          "io.github.tavstal.afk.FabricMain"
         ]
     },
     "mixins": [

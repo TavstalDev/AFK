@@ -76,7 +76,8 @@ jar {
                 'Implementation-Title'  : project.name,
                 'Implementation-Version': project.jar.archiveVersion,
                 'Implementation-Vendor' : mod_author,
-                'Built-On-Minecraft'    : minecraft_version
+                'Built-On-Minecraft'    : minecraft_version,
+                "ContainedDeps"         : "com.electronwill.night-config:core:3.7.1"
         ])
     }
 }
@@ -99,7 +100,8 @@ processResources {
             "forge_version": forge_version,
             "forge_loader_version_range": forge_loader_version_range,
             'credits'                      : credits,
-            'java_version'                 : java_version
+            'java_version'                 : java_version,
+            'mod_environment'              : mod_environment
     ]
 
     filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {

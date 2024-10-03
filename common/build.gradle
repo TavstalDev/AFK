@@ -1,6 +1,7 @@
 plugins {
     id 'multiloader-common'
     id 'net.neoforged.moddev'
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 neoForge {
@@ -21,6 +22,12 @@ dependencies {
     // fabric and neoforge both bundle mixinextras, so it is safe to use it in common
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
     annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
+
+    // Night Config
+    implementation "com.electronwill.night-config:core:3.7.1"
+    implementation "com.electronwill.night-config:toml:3.7.1"
+
+
 }
 
 configurations {
