@@ -3,6 +3,7 @@ package io.github.tavstal.afk;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.ServerChatEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -94,6 +95,12 @@ public class EventListener {
     public void onPlayerAttackedEntity(AttackEntityEvent event) {
         if (CommonClass.CONFIG().DisableOnAttackEntity)
             AFKEvents.OnAttackEntity(event.getEntity(), event.getTarget());
+    }
+
+    // Damage
+    @SubscribeEvent
+    public void onDamage(LivingDamageEvent event) {
+        AFKEvents.OnDamageEntity(event.getEntity(), event.getEntity().getLastDamageSource());
     }
 
     // Right Click Entity

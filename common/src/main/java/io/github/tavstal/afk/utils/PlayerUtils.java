@@ -1,6 +1,7 @@
 package io.github.tavstal.afk.utils;
 
 import io.github.tavstal.afk.CommonClass;
+import io.github.tavstal.afk.CommonConfig;
 import io.github.tavstal.afk.models.PlayerData;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.server.MinecraftServer;
@@ -12,6 +13,8 @@ import net.minecraft.world.scores.Scoreboard;
 
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +25,14 @@ public class PlayerUtils {
             return false;
 
         return data.IsAFK;
+    }
+
+    public static boolean IsInCombat(Player player) {
+        PlayerData data = CommonClass.GetPlayerData(player.getStringUUID());
+        if (data == null)
+            return false;
+
+        return Duration.between(LocalDateTime.now(), data.LastCombatTime).toSeconds() < CommonClass.CONFIG().CombatTimeout;
     }
 
     public static boolean IsSleeping(Player player) {

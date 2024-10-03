@@ -1,6 +1,7 @@
 package io.github.tavstal.afk.commands;
 
 import com.mojang.brigadier.*;
+import io.github.tavstal.afk.utils.ModUtils;
 import net.minecraft.commands.*;
 import com.mojang.brigadier.context.*;
 import io.github.tavstal.afk.CommonClass;
@@ -19,6 +20,11 @@ public class AFKCommand {
 
             if (player == null)
                 return 0;
+
+            if (PlayerUtils.IsInCombat(player)) {
+                player.sendSystemMessage(ModUtils.Literal(CommonClass.CONFIG().CommandAFKCombatError));
+                return 0;
+            }
 
             if (PlayerUtils.IsAFK(player.getStringUUID()))
                 CommonClass.ChangeAFKMode(player, false);

@@ -20,6 +20,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -70,7 +71,6 @@ public class AFKEvents {
     public static InteractionResult OnServerTick(MinecraftServer server) {
         for (var player : server.getPlayerList().getPlayers()) {
             var uuid = player.getStringUUID();
-            var combatTracker = player.getCombatTracker();
             PlayerData data = CommonClass.GetPlayerData(uuid);
 
             // NOTES
@@ -86,7 +86,9 @@ public class AFKEvents {
                 isInMovingVehicle = playerVehicle.getControllingPassenger() != player || playerVehicle.hasImpulse;
             }
 
-            boolean isMovedUnwillingly = player.isInPowderSnow || player.isChangingDimension() || player.isInWater() || player.isInLava() || isInMovingVehicle || player.isFallFlying() || player.isHurt() || /* TODO is in combat ||*/ isTeleported;
+            boolean isMovedUnwillingly = player.isInPowderSnow || player.isChangingDimension() || player.isInWater()
+                    || player.isInLava() || isInMovingVehicle || player.isFallFlying() || player.isHurt()
+                    || PlayerUtils.IsInCombat(player) || isTeleported;
             // Should disable AFK no matter what because player had input
             boolean shouldDisableAFK = player.isSprinting() || player.isShiftKeyDown() || player.isUsingItem() || player.yHeadRot != data.HeadRotation;
 
@@ -128,7 +130,7 @@ public class AFKEvents {
             else
             {
                 // AUTO AFK Check
-                if (!(PlayerUtils.IsAFK(uuid) /*|| TODO: is in combat */))
+                if (!(PlayerUtils.IsAFK(uuid) || PlayerUtils.IsInCombat(player)))
                 {
                     if (Duration.between(data.Date, LocalDateTime.now()).toSeconds() > CommonClass.CONFIG().AutoAFKInterval && CommonClass.CONFIG().AutoAFKInterval > 0) {
                         CommonClass.ChangeAFKMode(player, true);
@@ -160,7 +162,17 @@ public class AFKEvents {
         CommonClass.LOG.debug("ATTACK_ENTITY was called by {}", EntityUtils.GetName(player));
         if (CommonClass.CONFIG().DisableOnAttackEntity)
             CommonClass.ChangeAFKMode(player, false);
+
+        // TODO: Is in combat
+
         return InteractionResult.PASS;
+    }
+
+    public static boolean OnDamageEntity(Entity entity, DamageSource source) {
+
+        // TODO: Is in combat
+
+        return true;
     }
 
     public static InteractionResult OnUseBlock(Player player) {

@@ -8,6 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -105,6 +106,12 @@ public class EventListener {
     public void onPlayerAttackedEntity(AttackEntityEvent event) {
         if (CommonClass.CONFIG().DisableOnAttackEntity)
             AFKEvents.OnAttackEntity(event.getEntity(), event.getTarget());
+    }
+
+    // Damage
+    @SubscribeEvent
+    public void onDamage(LivingDamageEvent event) {
+        AFKEvents.OnDamageEntity(event.getEntity(), event.getEntity().getLastDamageSource());
     }
 
     // Right Click Entity

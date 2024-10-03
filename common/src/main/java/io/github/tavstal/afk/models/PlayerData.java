@@ -13,7 +13,7 @@ public class PlayerData {
     public int TeleportTTL;
     public int ImpulseTTL;
     public LocalDateTime Date;
-    //public boolean IsHurt;
+    public LocalDateTime LastCombatTime;
 
     public PlayerData(Vec3 lastPosition, BlockPos lastBlockPosition, float headRotation, LocalDateTime date) {
         LastPosition = lastPosition;
