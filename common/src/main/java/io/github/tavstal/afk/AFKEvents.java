@@ -163,14 +163,47 @@ public class AFKEvents {
         if (CommonClass.CONFIG().DisableOnAttackEntity)
             CommonClass.ChangeAFKMode(player, false);
 
-        // TODO: Is in combat
+        String uuid = player.getStringUUID();
+        PlayerData playerData = CommonClass.GetPlayerData(uuid);
+        if (playerData != null) {
+
+            playerData.LastCombatTime = LocalDateTime.now();
+            CommonClass.PutPlayerData(uuid, playerData);
+        }
+
+        if (entity instanceof Player targetPlayer) {
+            String targetUUID = targetPlayer.getStringUUID();
+            PlayerData targetData = CommonClass.GetPlayerData(targetUUID);
+            if (targetData != null) {
+                targetData.LastCombatTime = LocalDateTime.now();
+                CommonClass.PutPlayerData(targetUUID, targetData);
+            }
+        }
+
 
         return InteractionResult.PASS;
     }
 
     public static boolean OnDamageEntity(Entity entity, DamageSource source) {
 
-        // TODO: Is in combat
+        if (entity instanceof Player player) {
+            String uuid = player.getStringUUID();
+            PlayerData playerData = CommonClass.GetPlayerData(uuid);
+            if (playerData != null) {
+
+                playerData.LastCombatTime = LocalDateTime.now();
+                CommonClass.PutPlayerData(uuid, playerData);
+            }
+        }
+
+        if (source.getEntity() != null && source.getEntity() instanceof Player targetPlayer) {
+            String targetUUID = targetPlayer.getStringUUID();
+            PlayerData targetData = CommonClass.GetPlayerData(targetUUID);
+            if (targetData != null) {
+                targetData.LastCombatTime = LocalDateTime.now();
+                CommonClass.PutPlayerData(targetUUID, targetData);
+            }
+        }
 
         return true;
     }
