@@ -1,8 +1,15 @@
+# Define versions
 [versions]
-sponge-mixin='0.7-SNAPSHOT'
-sponge-mixin-processor='0.8.5-SNAPSHOT'
-llamalad-mixin-extras='0.3.5'
-fabric-loom='1.7-SNAPSHOT'
-forge-gradle='[6.0.24,6.2)'
-neoforged-moddev='0.1.110'
+sponge_mixin='0.7-SNAPSHOT'
+sponge_mixin_processor='0.8.5-SNAPSHOT'
+llamalad_mixin_extras='0.3.5'
+fabric_loom='1.7-SNAPSHOT'
+forge_gradle='[6.0.24,6.2)'
+neoforged_moddev='0.1.110'
 joptsimple='5.0.4'
+
+# Define libraries (dependencies)
+[libraries]
+
+# Define plugins
+[plugins]
