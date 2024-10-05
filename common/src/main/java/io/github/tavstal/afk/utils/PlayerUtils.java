@@ -1,9 +1,7 @@
 package io.github.tavstal.afk.utils;
 
 import io.github.tavstal.afk.CommonClass;
-import io.github.tavstal.afk.CommonConfig;
 import io.github.tavstal.afk.models.PlayerData;
-import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,36 +9,61 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 
-import java.lang.reflect.Field;
-import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PlayerUtils {
     public static boolean IsAFK(String uuid) {
-        PlayerData data = CommonClass.GetPlayerData(uuid);
-        if (data == null)
-            return false;
+        try {
+            PlayerData data = CommonClass.GetPlayerData(uuid);
+            if (data == null)
+                return false;
 
-        return data.IsAFK;
+            return data.IsAFK;
+        }
+        catch (Exception ex)
+        {
+            CommonClass.LOG.error("Failed to determine 'is the player afk':");
+            CommonClass.LOG.error(ex.getLocalizedMessage());
+            return  false;
+        }
     }
 
     public static boolean IsInCombat(Player player) {
-        PlayerData data = CommonClass.GetPlayerData(player.getStringUUID());
-        if (data == null)
-            return false;
+        try {
+            PlayerData data = CommonClass.GetPlayerData(player.getStringUUID());
+            if (data == null)
+                return false;
 
-        return Duration.between(LocalDateTime.now(), data.LastCombatTime).toSeconds() < CommonClass.CONFIG().CombatTimeout;
+            if (data.LastCombatTime == null) {
+                return false;
+            }
+
+            long duration = Duration.between(data.LastCombatTime, LocalDateTime.now()).toSeconds();
+            return duration  < CommonClass.CONFIG().CombatTimeout;
+        }
+        catch (Exception ex)
+        {
+            CommonClass.LOG.error("Failed to determine 'is the player in combat':");
+            CommonClass.LOG.error(ex.getLocalizedMessage());
+            return  false;
+        }
     }
 
     public static boolean IsSleeping(Player player) {
-        PlayerData data = CommonClass.GetPlayerData(player.getStringUUID());
-        if (data == null)
-            return false;
+        try {
+            PlayerData data = CommonClass.GetPlayerData(player.getStringUUID());
+            if (data == null)
+                return false;
 
-        return data.IsAFK || player.isSleeping();
+            return data.IsAFK || player.isSleeping();
+        }
+        catch (Exception ex)
+        {
+            CommonClass.LOG.error("Failed to determine 'is the player sleeping':");
+            CommonClass.LOG.error(ex.getLocalizedMessage());
+            return  false;
+        }
     }
 
     public static ServerPlayer GetServerPlayer(Player player) {
@@ -63,36 +86,39 @@ public class PlayerUtils {
     }
 
     public  static  void UpdateTablistName(Player player) {
-        if (player == null)
-        {
-            CommonClass.LOG.error("The provided player was null.");
-            return;
-        }
-        var server = player.getServer();
-        if (server == null)
-        {
-            CommonClass.LOG.error("The provided player's server was null.");
-            return;
-        }
-
-        ServerScoreboard scoreboard = server.getScoreboard();
-
-        var data = CommonClass.GetPlayerData(player.getStringUUID());
-        String playerName = (player.hasCustomName() ? player.getCustomName() : player.getName()).getString();
-
-        PlayerTeam currentTeam = GetPlayerTeam(player);
-        if (currentTeam != null)
-            scoreboard.removePlayerFromTeam(playerName, currentTeam);
-
-        if (data.IsAFK) {
-            scoreboard.addPlayerToTeam(playerName, scoreboard.getPlayerTeam("afk"));
-        }
-        else  {
-            if (CommonClass.CONFIG().ShowWorldTablist) {
-                String worldName = WorldUtils.GetName(EntityUtils.GetLevel(player));
-                scoreboard.addPlayerToTeam(playerName, scoreboard.getPlayerTeam("world_" + worldName));
+        try {
+            if (player == null) {
+                CommonClass.LOG.error("The provided player was null.");
+                return;
             }
+            var server = player.getServer();
+            if (server == null) {
+                CommonClass.LOG.error("The provided player's server was null.");
+                return;
+            }
+
+            ServerScoreboard scoreboard = server.getScoreboard();
+
+            var data = CommonClass.GetPlayerData(player.getStringUUID());
+            String playerName = (player.hasCustomName() ? player.getCustomName() : player.getName()).getString();
+
+            PlayerTeam currentTeam = GetPlayerTeam(player);
+            if (currentTeam != null)
+                scoreboard.removePlayerFromTeam(playerName, currentTeam);
+
+            if (data.IsAFK) {
+                scoreboard.addPlayerToTeam(playerName, scoreboard.getPlayerTeam("afk"));
+            } else {
+                if (CommonClass.CONFIG().ShowWorldTablist) {
+                    String worldName = WorldUtils.GetName(EntityUtils.GetLevel(player));
+                    scoreboard.addPlayerToTeam(playerName, scoreboard.getPlayerTeam("world_" + worldName));
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            CommonClass.LOG.error("Error during executing method 'UpdateTablistName':");
+            CommonClass.LOG.error(ex.getLocalizedMessage());
         }
     }
 }
-

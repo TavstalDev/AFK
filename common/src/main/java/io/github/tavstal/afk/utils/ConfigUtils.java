@@ -19,44 +19,52 @@ public class ConfigUtils {
     private static final Path configFilePath = Paths.get(minecraftRootPath, "config", "tafk.toml");
 
     public static CommonConfig LoadConfig() {
-        File configFile = configFilePath.toFile();
-        CommonConfig config = null;
-
-        if (!configFile.exists()) {
-            try {
-                File parentDir = configFile.getParentFile();
-                if (!parentDir.exists()) {
-                    parentDir.mkdirs();
-                }
-
-                // Create a new instance of the config class with default values
-                config = CommonConfig.class.getDeclaredConstructor().newInstance();
-                SaveConfig(config);  // Save the new config file with default values
-                return config;
-            } catch (Exception e) {
-                CommonClass.LOG.error("Failed to load default configs.");
-                CommonClass.LOG.error(e.getLocalizedMessage());
-                return null;
-            }
-        }
-
-        CommentedFileConfig fileConfig = CommentedFileConfig.builder(configFile).sync().build();
-        fileConfig.load();
-
         try {
-            config = CommonConfig.class.getDeclaredConstructor().newInstance();  // Create an instance of the config class
-            // Use reflection to load all fields automatically
-            for (Field field : CommonConfig.class.getDeclaredFields()) {
-                field.setAccessible(true);
-                Object value = fileConfig.getOrElse(field.getName(), field.get(config));
-                field.set(config, value);  // Assign the value from the file to the field
-            }
-        } catch (Exception e) {
-            CommonClass.LOG.error("Failed to load configs.");
-            CommonClass.LOG.error(e.getLocalizedMessage());
-        }
+            File configFile = configFilePath.toFile();
+            CommonConfig config = null;
 
-        return config;
+            if (!configFile.exists()) {
+                try {
+                    File parentDir = configFile.getParentFile();
+                    if (!parentDir.exists()) {
+                        parentDir.mkdirs();
+                    }
+
+                    // Create a new instance of the config class with default values
+                    config = CommonConfig.class.getDeclaredConstructor().newInstance();
+                    SaveConfig(config);  // Save the new config file with default values
+                    return config;
+                } catch (Exception e) {
+                    CommonClass.LOG.error("Failed to load default configs.");
+                    CommonClass.LOG.error(e.getLocalizedMessage());
+                    return null;
+                }
+            }
+
+            CommentedFileConfig fileConfig = CommentedFileConfig.builder(configFile).sync().build();
+            fileConfig.load();
+
+            try {
+                config = CommonConfig.class.getDeclaredConstructor().newInstance();  // Create an instance of the config class
+                // Use reflection to load all fields automatically
+                for (Field field : CommonConfig.class.getDeclaredFields()) {
+                    field.setAccessible(true);
+                    Object value = fileConfig.getOrElse(field.getName(), field.get(config));
+                    field.set(config, value);  // Assign the value from the file to the field
+                }
+            } catch (Exception e) {
+                CommonClass.LOG.error("Failed to load configs.");
+                CommonClass.LOG.error(e.getLocalizedMessage());
+            }
+
+            return config;
+        }
+        catch (Exception ex)
+        {
+            CommonClass.LOG.error("Error during executing method 'LoadConfig':");
+            CommonClass.LOG.error(ex.getLocalizedMessage());
+            return null;
+        }
     }
 
     public static void SaveConfig(CommonConfig config)

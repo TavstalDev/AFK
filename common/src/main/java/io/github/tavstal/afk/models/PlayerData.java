@@ -1,9 +1,9 @@
 package io.github.tavstal.afk.models;
 
-import java.time.LocalDateTime;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
+
+import java.time.LocalDateTime;
 
 public class PlayerData {
     public boolean IsAFK;
@@ -15,10 +15,11 @@ public class PlayerData {
     public LocalDateTime Date;
     public LocalDateTime LastCombatTime;
 
-    public PlayerData(Vec3 lastPosition, BlockPos lastBlockPosition, float headRotation, LocalDateTime date) {
+    public PlayerData(Vec3 lastPosition, BlockPos lastBlockPosition, float headRotation, LocalDateTime date, LocalDateTime lastCombatTime) {
         LastPosition = lastPosition;
         LastBlockPosition = lastBlockPosition;
         HeadRotation = headRotation;
         Date = date;
+        LastCombatTime = lastCombatTime;
     }
 }
