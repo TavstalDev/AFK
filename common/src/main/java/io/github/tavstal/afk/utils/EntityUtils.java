@@ -24,7 +24,7 @@ public class EntityUtils {
     }
 
     public static Level GetLevel(Entity entity) {
-        return entity.level();
+        return entity.level;
     }
 
     public static ServerLevel GetServerLevel(Entity entity) {
