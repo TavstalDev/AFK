@@ -17,22 +17,30 @@ public class AFKCommand {
         }));
     }
     private static int execute(CommandContext<CommandSourceStack> command){
-        if(command.getSource().getEntity() instanceof Player){
-            Player player = (Player) command.getSource().getEntity();
+        try {
+            if (command.getSource().getEntity() instanceof Player) {
+                Player player = (Player) command.getSource().getEntity();
 
-            if (player == null)
-                return 0;
+                if (player == null)
+                    return 0;
 
-            if (PlayerUtils.IsInCombat(player)) {
-                player.sendSystemMessage(ModUtils.Literal(CommonClass.CONFIG().CommandAFKCombatError));
-                return 0;
+                if (PlayerUtils.IsInCombat(player)) {
+                    player.sendSystemMessage(ModUtils.Literal(CommonClass.CONFIG().CommandAFKCombatError));
+                    return 0;
+                }
+
+                if (PlayerUtils.IsAFK(player.getStringUUID()))
+                    CommonClass.ChangeAFKMode(player, false);
+                else
+                    CommonClass.ChangeAFKMode(player, true);
             }
-
-            if (PlayerUtils.IsAFK(player.getStringUUID()))
-                CommonClass.ChangeAFKMode(player, false);
-            else
-                CommonClass.ChangeAFKMode(player, true);
+            return Command.SINGLE_SUCCESS;
         }
-        return Command.SINGLE_SUCCESS;
+        catch (Exception ex)
+        {
+            CommonClass.LOG.error("Error during executing command 'afk':");
+            CommonClass.LOG.error(ex.getLocalizedMessage());
+            return 0;
+        }
     }
 }

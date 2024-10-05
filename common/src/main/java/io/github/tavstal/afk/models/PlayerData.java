@@ -15,10 +15,11 @@ public class PlayerData {
     public LocalDateTime Date;
     public LocalDateTime LastCombatTime;
 
-    public PlayerData(Vec3 lastPosition, BlockPos lastBlockPosition, float headRotation, LocalDateTime date) {
+    public PlayerData(Vec3 lastPosition, BlockPos lastBlockPosition, float headRotation, LocalDateTime date, LocalDateTime lastCombatTime) {
         LastPosition = lastPosition;
         LastBlockPosition = lastBlockPosition;
         HeadRotation = headRotation;
         Date = date;
+        LastCombatTime = lastCombatTime;
     }
 }
