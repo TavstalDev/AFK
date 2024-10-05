@@ -6,7 +6,10 @@ import com.mojang.brigadier.LiteralMessage;
 
 import io.github.tavstal.afk.CommonClass;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.scores.Scoreboard;
 
 public class ModUtils {
     public static Component Literal(String text) {
@@ -80,6 +83,22 @@ public class ModUtils {
         for (var player : server.getPlayerList().getPlayers()) {
             if (WorldUtils.GetName(EntityUtils.GetLevel(player)).equals(worldKey))
                 player.sendSystemMessage(messageComponent);
+        }
+    }
+
+    public static Scoreboard getServerScoreboard(MinecraftServer server) {
+        try {
+            // Get the main overworld level (you can adjust this if needed for other dimensions)
+            ServerLevel overworld = server.getLevel(ServerLevel.OVERWORLD);
+
+            if (overworld != null) {
+                return overworld.getScoreboard();
+            }
+            return  null;
+        } catch (Exception e) {
+            CommonClass.LOG.error("Failed to get server scoreboard.");
+            CommonClass.LOG.error(e.getLocalizedMessage());
+            return null;  // Or handle in a version-specific way
         }
     }
 }

@@ -71,7 +71,7 @@ public class CommonClass {
         }
 
         // Create scoreboard team
-        var scoreboard = server.getScoreboard();
+        var scoreboard = ModUtils.getServerScoreboard(server);
         if (scoreboard.getPlayerTeam("afk") == null) {
             PlayerTeam team = scoreboard.addPlayerTeam("afk");
             if (CONFIG().Prefix.isBlank())
