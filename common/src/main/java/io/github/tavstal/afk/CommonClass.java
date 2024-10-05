@@ -1,29 +1,27 @@
 package io.github.tavstal.afk;
 
-import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.util.Dictionary;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.Hashtable;
-
-import io.github.tavstal.afk.utils.*;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-
 import io.github.tavstal.afk.models.PlayerData;
-
+import io.github.tavstal.afk.utils.*;
 import net.minecraft.ChatFormatting;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.scores.PlayerTeam;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class CommonClass {
     public static final String MOD_ID = "afk";

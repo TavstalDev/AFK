@@ -1,15 +1,14 @@
 package io.github.tavstal.afk.utils;
 
-import java.text.MessageFormat;
-
 import com.mojang.brigadier.LiteralMessage;
-
 import io.github.tavstal.afk.CommonClass;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.scores.Scoreboard;
+
+import java.text.MessageFormat;
 
 public class ModUtils {
     public static Component Literal(String text) {

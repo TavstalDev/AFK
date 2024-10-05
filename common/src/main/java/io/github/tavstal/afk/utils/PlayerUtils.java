@@ -1,9 +1,7 @@
 package io.github.tavstal.afk.utils;
 
 import io.github.tavstal.afk.CommonClass;
-import io.github.tavstal.afk.CommonConfig;
 import io.github.tavstal.afk.models.PlayerData;
-import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,12 +9,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 
-import java.lang.reflect.Field;
-import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PlayerUtils {
     public static boolean IsAFK(String uuid) {

@@ -1,9 +1,9 @@
 package io.github.tavstal.afk.models;
 
-import java.time.LocalDateTime;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
+
+import java.time.LocalDateTime;
 
 public class PlayerData {
     public boolean IsAFK;

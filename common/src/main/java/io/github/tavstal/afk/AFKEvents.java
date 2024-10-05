@@ -1,20 +1,9 @@
 package io.github.tavstal.afk;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.time.LocalDateTime;
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
-
 import com.mojang.brigadier.CommandDispatcher;
 import io.github.tavstal.afk.commands.AFKCommand;
 import io.github.tavstal.afk.models.PlayerData;
-import io.github.tavstal.afk.utils.EntityUtils;
-import io.github.tavstal.afk.utils.PlayerUtils;
-import io.github.tavstal.afk.utils.WorldUtils;
-import io.github.tavstal.afk.utils.MathUtils;
-import io.github.tavstal.afk.utils.ModUtils;
-
+import io.github.tavstal.afk.utils.*;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -24,6 +13,12 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class AFKEvents {
     public static InteractionResult OnPlayerConnected(Player player) {

@@ -1,11 +1,13 @@
 package io.github.tavstal.afk.commands;
 
-import com.mojang.brigadier.*;
-import io.github.tavstal.afk.utils.ModUtils;
-import net.minecraft.commands.*;
-import com.mojang.brigadier.context.*;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
 import io.github.tavstal.afk.CommonClass;
+import io.github.tavstal.afk.utils.ModUtils;
 import io.github.tavstal.afk.utils.PlayerUtils;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.world.entity.player.Player;
 
 public class AFKCommand {
