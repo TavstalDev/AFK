@@ -7,6 +7,7 @@ import io.github.tavstal.afk.utils.*;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
@@ -48,16 +49,23 @@ public class AFKEvents {
                 return;
             }
 
-            var worldKey = WorldUtils.GetName(EntityUtils.GetLevel(player));
+            var level = EntityUtils.GetLevel(player);
+            String dayText;
+            if (level.isNight())
+                dayText = CommonClass.CONFIG().NightText;
+            else
+                dayText = CommonClass.CONFIG().DayText;
+
+            var worldKey = WorldUtils.GetName(level);
             if (player.isSleeping()) {
                 ModUtils.BroadcastMessageByWorld(player, CommonClass.CONFIG().SleepStopMessage, worldKey,
-                        EntityUtils.GetName(player), MathUtils.Clamp(CommonClass.GetRequiredPlayersToReset(server, worldKey), 0, server.getMaxPlayers()));
+                        EntityUtils.GetName(player), MathUtils.Clamp(CommonClass.GetRequiredPlayersToReset(server, worldKey), 0, server.getMaxPlayers()), dayText);
             }
 
             int requiredPlayersToReset = CommonClass.GetRequiredPlayersToReset(server, worldKey);
-            if (requiredPlayersToReset <= 0) {
-                ModUtils.BroadcastMessageByWorld(player, CommonClass.CONFIG().SleepResetMessage, worldKey);
-                CommonClass.WakeUp(EntityUtils.GetServerLevel(player), server);
+            if (requiredPlayersToReset <= 0 && CommonClass.GetSleepingPlayers(server, worldKey) > 0) {
+                ModUtils.BroadcastMessageByWorld(player, CommonClass.CONFIG().SleepResetMessage, worldKey, dayText);
+                CommonClass.WakeUp(EntityUtils.GetServerLevel(player), server, level.isDay());
             }
         }
         catch (Exception ex)
@@ -167,6 +175,8 @@ public class AFKEvents {
     public static void OnChatted(Player player) {
         try {
             CommonClass.LOG.debug("CHAT_MESSAGE was called by {}", EntityUtils.GetName(player));
+            if (PlayerUtils.IsFake(player))
+                return;
             CommonClass.ChangeAFKMode(player, false);
         }
         catch (Exception ex)
@@ -176,9 +186,11 @@ public class AFKEvents {
         }
     }
 
-    public static InteractionResult OnAttackBlock(Player player) {
+    public static InteractionResult OnAttackBlock(Player player, InteractionHand hand) {
         try {
             CommonClass.LOG.debug("ATTACK_BLOCK was called by {}", EntityUtils.GetName(player));
+            if (PlayerUtils.IsFake(player))
+                return InteractionResult.PASS;
             CommonClass.ChangeAFKMode(player, false);
         }
         catch (Exception ex)
@@ -189,21 +201,26 @@ public class AFKEvents {
         return InteractionResult.PASS;
     }
 
-    public static InteractionResult OnAttackEntity(Player player, Entity entity) {
+    public static InteractionResult OnAttackEntity(Player player, Entity entity, InteractionHand hand) {
         try {
             CommonClass.LOG.debug("ATTACK_ENTITY was called by {}", EntityUtils.GetName(player));
-            if (CommonClass.CONFIG().DisableOnAttackEntity)
-                CommonClass.ChangeAFKMode(player, false);
+            if (!PlayerUtils.IsFake(player)) {
+                if (CommonClass.CONFIG().DisableOnAttackEntity)
+                    CommonClass.ChangeAFKMode(player, false);
 
-            String uuid = player.getStringUUID();
-            PlayerData playerData = CommonClass.GetPlayerData(uuid);
-            if (playerData != null) {
+                String uuid = player.getStringUUID();
+                PlayerData playerData = CommonClass.GetPlayerData(uuid);
+                if (playerData != null) {
 
-                playerData.LastCombatTime = LocalDateTime.now();
-                CommonClass.PutPlayerData(uuid, playerData);
+                    playerData.LastCombatTime = LocalDateTime.now();
+                    CommonClass.PutPlayerData(uuid, playerData);
+                }
             }
 
             if (entity instanceof Player targetPlayer) {
+                if (PlayerUtils.IsFake(targetPlayer))
+                    return InteractionResult.PASS;
+
                 String targetUUID = targetPlayer.getStringUUID();
                 PlayerData targetData = CommonClass.GetPlayerData(targetUUID);
                 if (targetData != null) {
@@ -224,12 +241,14 @@ public class AFKEvents {
     public static boolean OnDamageEntity(Entity entity, DamageSource source) {
         try {
             if (entity instanceof Player player) {
-                String uuid = player.getStringUUID();
-                PlayerData playerData = CommonClass.GetPlayerData(uuid);
-                if (playerData != null) {
+                if (!PlayerUtils.IsFake(player)) {
+                    String uuid = player.getStringUUID();
+                    PlayerData playerData = CommonClass.GetPlayerData(uuid);
+                    if (playerData != null) {
 
-                    playerData.LastCombatTime = LocalDateTime.now();
-                    CommonClass.PutPlayerData(uuid, playerData);
+                        playerData.LastCombatTime = LocalDateTime.now();
+                        CommonClass.PutPlayerData(uuid, playerData);
+                    }
                 }
             }
 
@@ -237,6 +256,9 @@ public class AFKEvents {
                 return true;
 
             if (source.getEntity() != null && source.getEntity() instanceof Player targetPlayer) {
+                if (PlayerUtils.IsFake(targetPlayer))
+                    return true;
+
                 String targetUUID = targetPlayer.getStringUUID();
                 PlayerData targetData = CommonClass.GetPlayerData(targetUUID);
                 if (targetData != null) {
@@ -253,9 +275,12 @@ public class AFKEvents {
         return true;
     }
 
-    public static InteractionResult OnUseBlock(Player player) {
+    public static InteractionResult OnUseBlock(Player player, InteractionHand hand) {
         try {
             CommonClass.LOG.debug("USE_BLOCK was called by {}", EntityUtils.GetName(player));
+            if (PlayerUtils.IsFake(player))
+                return InteractionResult.PASS;
+
             CommonClass.ChangeAFKMode(player, false);
         }
         catch (Exception ex)
@@ -266,9 +291,11 @@ public class AFKEvents {
         return InteractionResult.PASS;
     }
 
-    public static InteractionResult OnUseEntity(Player player) {
+    public static InteractionResult OnUseEntity(Player player, InteractionHand hand) {
         try {
             CommonClass.LOG.debug("USE_ENTITY was called by {}", EntityUtils.GetName(player));
+            if (PlayerUtils.IsFake(player))
+                return InteractionResult.PASS;
             CommonClass.ChangeAFKMode(player, false);
         }
         catch (Exception ex)
@@ -279,9 +306,11 @@ public class AFKEvents {
         return InteractionResult.PASS;
     }
 
-    public static InteractionResultHolder<ItemStack> OnUseItem(Player player) {
+    public static InteractionResultHolder<ItemStack> OnUseItem(Player player, InteractionHand hand) {
         try {
             CommonClass.LOG.debug("USE_ITEM was called by {}", EntityUtils.GetName(player));
+            if (PlayerUtils.IsFake(player))
+                return InteractionResultHolder.pass(ItemStack.EMPTY);
             CommonClass.ChangeAFKMode(player, false);
         }
         catch (Exception ex)
@@ -330,15 +359,21 @@ public class AFKEvents {
                 return;
             }
 
-            var worldKey = WorldUtils.GetName(EntityUtils.GetLevel(entity));
+            var level = EntityUtils.GetLevel(entity);
+            String dayText;
+            if (level.isNight())
+                dayText = CommonClass.CONFIG().NightText;
+            else
+                dayText = CommonClass.CONFIG().DayText;
 
+            var worldKey = WorldUtils.GetName(level);
             int requiredPlayersToReset = CommonClass.GetRequiredPlayersToReset(server, worldKey);
             ModUtils.BroadcastMessageByWorld(entity, CommonClass.CONFIG().SleepStartMessage, worldKey,
-                    EntityUtils.GetName(entity), MathUtils.Clamp(requiredPlayersToReset, 0, server.getMaxPlayers()));
+                    EntityUtils.GetName(entity), MathUtils.Clamp(requiredPlayersToReset, 0, server.getMaxPlayers()), dayText);
 
             if (requiredPlayersToReset <= 0) {
-                ModUtils.BroadcastMessageByWorld(entity, CommonClass.CONFIG().SleepResetMessage, worldKey);
-                CommonClass.WakeUp(EntityUtils.GetServerLevel(entity), server);
+                ModUtils.BroadcastMessageByWorld(entity, CommonClass.CONFIG().SleepResetMessage, worldKey, dayText);
+                CommonClass.WakeUp(EntityUtils.GetServerLevel(entity), server, level.isDay());
             }
         }
         catch (Exception ex)
@@ -360,12 +395,20 @@ public class AFKEvents {
                 return;
             }
 
-            var worldKey = WorldUtils.GetName(EntityUtils.GetLevel(entity));
+            var level = EntityUtils.GetLevel(entity);
+            String dayText;
+            if (level.isNight())
+                dayText = CommonClass.CONFIG().NightText;
+            else
+                dayText = CommonClass.CONFIG().DayText;
+
+
+            var worldKey = WorldUtils.GetName(level);
             if (!worldKey.equals(CommonClass.GetLastWorldSleepReset())) {
                 ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
                 executorService.schedule(() -> {
                     ModUtils.BroadcastMessageByWorld(entity, CommonClass.CONFIG().SleepStopMessage, worldKey, EntityUtils.GetName(entity),
-                            MathUtils.Clamp(CommonClass.GetRequiredPlayersToReset(server, worldKey), 0, server.getMaxPlayers()));
+                            MathUtils.Clamp(CommonClass.GetRequiredPlayersToReset(server, worldKey), 0, server.getMaxPlayers()), dayText);
                 }, 10, TimeUnit.MILLISECONDS);
             }
         }
@@ -376,3 +419,4 @@ public class AFKEvents {
         }
     }
 }
+

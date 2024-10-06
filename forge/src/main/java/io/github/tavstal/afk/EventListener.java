@@ -1,28 +1,23 @@
 package io.github.tavstal.afk;
 
-import java.util.concurrent.TimeUnit;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickEmpty;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.*;
+import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class EventListener {
     @SubscribeEvent
@@ -91,21 +86,21 @@ public class EventListener {
     @SubscribeEvent
     public void onPlayerAttackedBlock(LeftClickBlock event) {
         if (CommonClass.CONFIG().DisableOnAttackBlock)
-            AFKEvents.OnAttackBlock(event.getEntity());
+            AFKEvents.OnAttackBlock(event.getEntity(), event.getHand());
     }
 
     // Right Click Block
     @SubscribeEvent
     public void onPlayerUsedBlock(RightClickBlock event) {
         if (CommonClass.CONFIG().DisableOnUseBlock)
-            AFKEvents.OnUseBlock(event.getEntity());
+            AFKEvents.OnUseBlock(event.getEntity(), event.getHand());
     }
 
     // Left Click Entity
     @SubscribeEvent
     public void onPlayerAttackedEntity(AttackEntityEvent event) {
         if (CommonClass.CONFIG().DisableOnAttackEntity)
-            AFKEvents.OnAttackEntity(event.getEntity(), event.getTarget());
+            AFKEvents.OnAttackEntity(event.getEntity(), event.getTarget(), event.getEntity().getUsedItemHand());
     }
 
     // Damage
@@ -118,20 +113,20 @@ public class EventListener {
     @SubscribeEvent
     public void onPlayerUsedEntity(EntityInteract event) {
         if (CommonClass.CONFIG().DisableOnUseEntity)
-            AFKEvents.OnUseEntity(event.getEntity());
+            AFKEvents.OnUseEntity(event.getEntity(), event.getHand());
     }
 
     // Left Click Empty
     @SubscribeEvent
     public void onPlayerUsedItem(LeftClickEmpty event) {
         if (CommonClass.CONFIG().DisableOnUseItem)
-            AFKEvents.OnUseItem(event.getEntity());
+            AFKEvents.OnUseItem(event.getEntity(), event.getHand());
     }
 
     // Right Click Item
     @SubscribeEvent
     public void onPlayerUsedItem(RightClickItem event) {
         if (CommonClass.CONFIG().DisableOnUseItem)
-            AFKEvents.OnUseItem(event.getEntity());
+            AFKEvents.OnUseItem(event.getEntity(), event.getHand());
     }
 }

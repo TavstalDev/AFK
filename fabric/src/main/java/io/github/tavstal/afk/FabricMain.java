@@ -1,21 +1,15 @@
 package io.github.tavstal.afk;
 
-import net.fabricmc.api.ModInitializer;
 import io.github.tavstal.afk.platform.FabricPlatformHelper;
-
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.EntitySleepEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.event.player.*;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.world.item.enchantment.effects.DamageEntity;
 
 public class FabricMain implements ModInitializer {
 
@@ -61,11 +55,11 @@ public class FabricMain implements ModInitializer {
         // Attack Block Event
         if (CommonClass.CONFIG().DisableOnAttackBlock)
         {
-            AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> AFKEvents.OnAttackBlock(player));
+            AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> AFKEvents.OnAttackBlock(player, hand));
         }
 
         // Attack Entity Event
-        AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> AFKEvents.OnAttackEntity(player, entity));
+        AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> AFKEvents.OnAttackEntity(player, entity, hand));
 
         // Allow Damage Event
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(((entity, source, amount) -> AFKEvents.OnDamageEntity(entity, source)));
@@ -73,19 +67,19 @@ public class FabricMain implements ModInitializer {
         // Use Block Event
         if (CommonClass.CONFIG().DisableOnUseBlock)
         {
-            UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> AFKEvents.OnUseBlock(player));
+            UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> AFKEvents.OnUseBlock(player, hand));
         }
 
         // Use Entity Event
         if (CommonClass.CONFIG().DisableOnUseEntity)
         {
-            UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> AFKEvents.OnUseEntity(player));
+            UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> AFKEvents.OnUseEntity(player, hand));
         }
 
         // Use Item Event
         if (CommonClass.CONFIG().DisableOnUseItem)
         {
-            UseItemCallback.EVENT.register((player, world, hand) -> AFKEvents.OnUseItem(player));
+            UseItemCallback.EVENT.register((player, world, hand) -> AFKEvents.OnUseItem(player, hand));
         }
 
         // Player World Change Event
