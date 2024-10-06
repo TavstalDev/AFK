@@ -55,11 +55,11 @@ public class FabricMain implements ModInitializer {
         // Attack Block Event
         if (CommonClass.CONFIG().DisableOnAttackBlock)
         {
-            AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> AFKEvents.OnAttackBlock(player));
+            AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> AFKEvents.OnAttackBlock(player, hand));
         }
 
         // Attack Entity Event
-        AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> AFKEvents.OnAttackEntity(player, entity));
+        AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> AFKEvents.OnAttackEntity(player, entity, hand));
 
         // Allow Damage Event
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(((entity, source, amount) -> AFKEvents.OnDamageEntity(entity, source)));
@@ -67,19 +67,19 @@ public class FabricMain implements ModInitializer {
         // Use Block Event
         if (CommonClass.CONFIG().DisableOnUseBlock)
         {
-            UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> AFKEvents.OnUseBlock(player));
+            UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> AFKEvents.OnUseBlock(player, hand));
         }
 
         // Use Entity Event
         if (CommonClass.CONFIG().DisableOnUseEntity)
         {
-            UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> AFKEvents.OnUseEntity(player));
+            UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> AFKEvents.OnUseEntity(player, hand));
         }
 
         // Use Item Event
         if (CommonClass.CONFIG().DisableOnUseItem)
         {
-            UseItemCallback.EVENT.register((player, world, hand) -> AFKEvents.OnUseItem(player));
+            UseItemCallback.EVENT.register((player, world, hand) -> AFKEvents.OnUseItem(player, hand));
         }
 
         // Player World Change Event

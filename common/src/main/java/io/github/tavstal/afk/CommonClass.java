@@ -160,6 +160,27 @@ public class CommonClass {
         }
     }
 
+    public static int GetSleepingPlayers(MinecraftServer server, String worldKey) {
+        try {
+            int playersSleeping = 0;
+
+            for (var serverPlayer : server.getPlayerList().getPlayers()) {
+                String playerWorld = WorldUtils.GetName(EntityUtils.GetLevel(serverPlayer));
+                if ((serverPlayer.isSleeping() && worldKey.equals(playerWorld))) {
+                    playersSleeping++;
+                }
+            }
+
+            return playersSleeping;
+        }
+        catch (Exception ex)
+        {
+            CommonClass.LOG.error("Failed to get the sleeping players:");
+            CommonClass.LOG.error(ex.getLocalizedMessage());
+            return 0;
+        }
+    }
+
     public static void ChangeAFKMode(Player player, boolean enable) {
         try {
             var uuid = player.getStringUUID();
@@ -202,6 +223,23 @@ public class CommonClass {
                 data.Date = LocalDateTime.now();
                 PutPlayerData(uuid, data);
             }
+
+            var server = player.getServer();
+            var level = EntityUtils.GetLevel(player);
+            if (!level.isNight())
+                return;
+
+            var worldKey = WorldUtils.GetName(level);
+            int requiredPlayersToReset = GetRequiredPlayersToReset(server, worldKey);
+            if (requiredPlayersToReset <= 0 && CommonClass.GetSleepingPlayers(server, worldKey) > 0) {
+                String dayText;
+                if (level.isNight())
+                    dayText = CommonClass.CONFIG().NightText;
+                else
+                    dayText = CommonClass.CONFIG().DayText;
+                ModUtils.BroadcastMessageByWorld(player, CommonClass.CONFIG().SleepResetMessage, worldKey, dayText);
+                CommonClass.WakeUp(EntityUtils.GetServerLevel(player), server, level.isDay());
+            }
         }
         catch (Exception ex)
         {
@@ -210,7 +248,7 @@ public class CommonClass {
         }
     }
 
-    public static void WakeUp(ServerLevel world, MinecraftServer server) {
+    public static void WakeUp(ServerLevel world, MinecraftServer server, boolean resetToNight) {
         try {
             var worldKey = WorldUtils.GetName(world);
             LOG.debug("World Key: {}", worldKey);
@@ -221,7 +259,11 @@ public class CommonClass {
                     _lastWorldSleepReset = worldKey;
                     if (world.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
                         var currentDayTime = world.getDayTime();
-                        world.setDayTime(currentDayTime + 24000L - currentDayTime % 24000L);
+                        long i = currentDayTime + 24000L;
+                        if (resetToNight)
+                            world.setDayTime((i - i % 24000L) - 12001L);
+                        else
+                            world.setDayTime(i - currentDayTime % 24000L);
                     }
 
                     if (world.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) {

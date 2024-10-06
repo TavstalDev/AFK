@@ -50,6 +50,32 @@ public class PlayerUtils {
         }
     }
 
+    public  static boolean IsFake(Player player) {
+        try
+        {
+            // This might look silly, but here is an explanation using Create as example.
+            // This is how a normal player's DisplayName looks:
+            // # START
+            // literal{}[style={clickEvent=ClickEvent{action=SUGGEST_COMMAND, value='/tell Tavstal '},
+            // hoverEvent=HoverEvent{action=<action show_entity>,
+            // value='net.minecraft.network.chat.HoverEvent$EntityTooltipInfo@e6e072c2'},insertion=Tavstal},
+            // siblings=[empty[style={color=white}, siblings=[empty[style={}], literal{Tavstal},
+            // literal{ [overworld] }[style={}]]]]]
+            // # END
+            // This is how Create's Deployer's DisplayName looks:
+            // # translation{key='create.block.deployer.damage_source_name', args=[]}
+            // Because player.getName() (literal{Tavstal}) is the same on both and only the real player's DisplayName contains it.
+            // So we can use it to determine the Player object is real or fake.
+            return !player.getDisplayName().toString().contains(player.getName().toString());
+        }
+        catch (Exception ex)
+        {
+            CommonClass.LOG.error("Failed to determine 'is the player fake':");
+            CommonClass.LOG.error(ex.getLocalizedMessage());
+            return  false;
+        }
+    }
+
     public static boolean IsSleeping(Player player) {
         try {
             PlayerData data = CommonClass.GetPlayerData(player.getStringUUID());
