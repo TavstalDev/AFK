@@ -56,7 +56,11 @@ public class CommonConfig {
     public String SleepResetMessage;
     @ConfigField(order = 25)
     public String CommandAFKCombatError;
-    @ConfigField(order = 26, comment = "How long does it take (in seconds) between hits to consider the player is not in combat.")
+    @ConfigField(order = 26)
+    public String DayText;
+    @ConfigField(order = 27)
+    public  String NightText;
+    @ConfigField(order = 28, comment = "How long does it take (in seconds) between hits to consider the player is not in combat.")
     public int CombatTimeout;
 
     @ConfigField(order = 100, comment = "DO NOT TOUCH THIS. This helps handlig config related changes after updates.")
@@ -86,10 +90,12 @@ public class CommonConfig {
 
         AFKOnMessage = "§6{0} is now AFK.";
         AFKOffMessage = "§6{0} is no longer AFK.";
-        SleepStartMessage = "§e{0} is sleeping. {1} player(s) needed to reset.";
-        SleepStopMessage = "§c{0} stopped sleeping. {1} player(s) needed to reset.";
-        SleepResetMessage = "§aSleeping through this night.";
+        SleepStartMessage = "§e{0} is sleeping. {1} player(s) needed to skip the {2}.";
+        SleepStopMessage = "§c{0} stopped sleeping. {1} player(s) needed to skip the {2}.";
+        SleepResetMessage = "§aSleeping through this {0}.";
         CommandAFKCombatError = "§cYou can not change your AFK state during combat.";
+        DayText = "day";
+        NightText = "night";
 
         CombatTimeout = 5;
 

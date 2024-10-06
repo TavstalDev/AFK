@@ -86,21 +86,21 @@ public class EventListener {
     @SubscribeEvent
     public void onPlayerAttackedBlock(LeftClickBlock event) {
         if (CommonClass.CONFIG().DisableOnAttackBlock)
-            AFKEvents.OnAttackBlock(event.getEntity());
+            AFKEvents.OnAttackBlock(event.getEntity(), event.getHand());
     }
 
     // Right Click Block
     @SubscribeEvent
     public void onPlayerUsedBlock(RightClickBlock event) {
         if (CommonClass.CONFIG().DisableOnUseBlock)
-            AFKEvents.OnUseBlock(event.getEntity());
+            AFKEvents.OnUseBlock(event.getEntity(), event.getHand());
     }
 
     // Left Click Entity
     @SubscribeEvent
     public void onPlayerAttackedEntity(AttackEntityEvent event) {
         if (CommonClass.CONFIG().DisableOnAttackEntity)
-            AFKEvents.OnAttackEntity(event.getEntity(), event.getTarget());
+            AFKEvents.OnAttackEntity(event.getEntity(), event.getTarget(), event.getEntity().getUsedItemHand());
     }
 
     // Damage
@@ -113,20 +113,20 @@ public class EventListener {
     @SubscribeEvent
     public void onPlayerUsedEntity(EntityInteract event) {
         if (CommonClass.CONFIG().DisableOnUseEntity)
-            AFKEvents.OnUseEntity(event.getEntity());
+            AFKEvents.OnUseEntity(event.getEntity(), event.getHand());
     }
 
     // Left Click Empty
     @SubscribeEvent
     public void onPlayerUsedItem(LeftClickEmpty event) {
         if (CommonClass.CONFIG().DisableOnUseItem)
-            AFKEvents.OnUseItem(event.getEntity());
+            AFKEvents.OnUseItem(event.getEntity(), event.getHand());
     }
 
     // Right Click Item
     @SubscribeEvent
     public void onPlayerUsedItem(RightClickItem event) {
         if (CommonClass.CONFIG().DisableOnUseItem)
-            AFKEvents.OnUseItem(event.getEntity());
+            AFKEvents.OnUseItem(event.getEntity(), event.getHand());
     }
 }
