@@ -17,7 +17,7 @@ public class EventListener {
     @SubscribeEvent
     public void onServerStarted(ServerStartedEvent event) {
 
-        CommonClass.init(event.getServer());
+        CommonClass.init(event.getServer(), false);
         AFKEvents.OnCommandRegister(event.getServer().getCommands().getDispatcher());
     }
 

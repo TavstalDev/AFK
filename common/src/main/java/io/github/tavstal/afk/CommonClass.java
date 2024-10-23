@@ -27,6 +27,11 @@ public class CommonClass {
     public static final String MOD_ID = "afk";
     public static final String MOD_NAME = "TAFK";
     public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
+    private static boolean _isPlugin;
+    public static boolean IsPlugin() {
+        return _isPlugin;
+    }
+
     private static String _lastWorldSleepReset;
 
     public static String GetLastWorldSleepReset() {
@@ -63,8 +68,9 @@ public class CommonClass {
         return _config;
     }
 
-    public static void init(MinecraftServer server) {
+    public static void init(MinecraftServer server, boolean isPlugin) {
         try {
+            _isPlugin = isPlugin;
             if (CONFIG().EnableDebugMode) {
                 SetLogLevel("DEBUG");
             }

@@ -33,7 +33,7 @@ public class FabricMain implements ModInitializer {
             }
 
             _isInitialized = true;
-            CommonClass.init(server);
+            CommonClass.init(server, false);
             AFKEvents.OnCommandRegister(server.getCommands().getDispatcher());
         });
 

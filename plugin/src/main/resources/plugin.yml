@@ -1,0 +1,7 @@
+name: AFK
+version: 1.0.0
+main: io.github.tavstal.afk.PluginMain
+description: A simple AFK mod to make multiplayer sleeping easier.
+author: Tavstal
+website: https://github.com/TavstalDev/AFK
+api-version: '1.21.1'

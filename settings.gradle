@@ -36,6 +36,17 @@ pluginManagement {
                 includeGroupAndSubgroups('net.minecraftforge')
             }
         }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "PaperMC"
+                    url = uri("https://repo.papermc.io/repository/maven-public/")
+                }
+            }
+            filter {
+                includeGroupAndSubgroups("org.bukkit")
+            }
+        }
     }
 }
 
@@ -49,3 +60,5 @@ include('common')
 include('fabric')
 include('neoforge')
 include('forge')
+include('plugin')
+

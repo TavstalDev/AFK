@@ -1,0 +1,36 @@
+plugins {
+    id 'multiloader-loader'
+    id 'java'
+    id("io.papermc.paperweight.userdev") version "1.7.3"
+    id("xyz.jpenilla.run-paper") version "2.3.1" // Adds runServer and runMojangMappedServer tasks for testing
+    id 'com.github.johnrengelman.shadow' version '8.1.0'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21) // Set Java 21
+    }
+}
+
+dependencies {
+    paperweight.paperDevBundle("${minecraft_version}-${paper_version}")
+
+    // Night Config
+    implementation "com.electronwill.night-config:toml:3.7.1"
+    compileOnly "com.electronwill.night-config:toml:3.7.1"
+}
+
+artifacts {
+    archives shadowJar
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    sourceCompatibility = '21'
+    targetCompatibility = '21'
+}
+
+shadowJar {
+    archiveBaseName.set("${mod_id}-${minecraft_version}")
+    archiveClassifier.set('')
+}
